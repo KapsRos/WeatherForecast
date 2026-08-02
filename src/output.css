@@ -1077,13 +1077,13 @@
 }
 @font-face {
   font-family: "WeatherFont";
-  src: url("./fonts/Montserrat-Regular.ttf");
+  src: url("../fonts/Montserrat-Regular.ttf");
   font-weight: 400;
   font-style: normal;
 }
 @font-face {
   font-family: "WeatherFont";
-  src: url("./fonts/Montserrat-SemiBold.ttf");
+  src: url("../fonts/Montserrat-SemiBold.ttf");
   font-weight: 600;
   font-style: normal;
 }
