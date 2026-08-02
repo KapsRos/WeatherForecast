@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: "WeatherFont";
+    src: url("/fonts/Montserrat-Regular.ttf");
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "WeatherFont";
+    src: url("/fonts/Montserrat-SemiBold.ttf");
+    font-weight: 600;
+    font-style: normal;
+}
+
+/* src/input.css */
+@layer utilities {
+
+    /* Thin scrollbar for Webkit browsers (Chrome, Safari, Edge) */
+    .scrollbar-thin::-webkit-scrollbar {
+        height: 6px;
+        /* Adjust height for visibility */
+    }
+
+    .scrollbar-thumb-white\/20::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+    }
+
+    .scrollbar-track-transparent::-webkit-scrollbar-track {
+        background: transparent;
+    }
+}

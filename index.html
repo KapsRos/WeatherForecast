@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link href="src/output.css" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="images/browser-icon.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css">
+    <style>
+        /* Keep body invisible by default */
+
+
+        /* Class added by JS once initApp() finishes */
+        body.app-loaded {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body class="flex flex-col font-[WeatherFont] text-white bg-[#202020] sm:px-10 px-4 relative">
+
+    <!-- HEADER -->
+    <header class="shrink-0 bg-[#202020]">
+        <div class="flex items-center px-4 py-4 ">
+
+            <div class="xl:mr-14 mr-auto ">
+                <a href="" class="text-2xl text-white inline-block pt-1">
+                    Weather forecast
+                </a>
+            </div>
+
+            <div class="flex-1 mx-10 hidden lg:block">
+                <input type="text" id="inputCity"
+                    class="w-full border border-white rounded-2xl placeholder-[#f2f2f29f] pl-8 py-2.5 text-white bg-transparent"
+                    placeholder="Search for city">
+            </div>
+
+            <div class="lg:w-72 md:w-36 hidden lg:block">
+                <button id="search"
+                    class="w-full text-green-600 border border-green-600 px-4 py-2.5 rounded-2xl cursor-pointer hover:bg-green-600 hover:text-white transition-all ">
+                    Search
+
+                </button>
+            </div>
+            <button id="menu-btn" class="lg:hidden absolute z-30 right-6 top-6">
+                ☰
+            </button>
+            <div id="mobile-menu" class="hidden bg-[#064e3b] absolute top-0 left-0 w-full pl-16 py-3 border-0">
+                <div class="block max-[550px]:pl-7">
+                    <input type="text" id="inputMobile"
+                        class="
+                        w-1/2  border border-white rounded-2xl placeholder-black pl-8 py-2.5
+                         bg-white text-black
+                        max-[550px]:w-3/4 max-[550px]:text-center max-[550px]:p-0 max-[550px]:py-2.5 outline-none focus:ring-2 focus:ring-white"
+                        placeholder="Search for city">
+                    <button id="searchMobile"
+                        class="
+                    w-1/4 text-white border bg-[#022c22] mx-10 px-4 py-2.5 rounded-2xl mobile-btn font-bold
+                    max-[600px]:mx-6 max-[550px]:m-0 max-[550px]:w-3/4 max-[550px]:mt-3 active:scale-95 transition-transform">
+                        Search
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="error" class=""></div>
+    </header>
+    <!-- MAIN -->
+    <main class="flex-1 flex overflow-hidden max-[550px]:mt-6" id="main">
+
+        <div class="block min-[1630px]:flex min-[1630px]:gap-15 w-full p-4">
+
+            <!-- SIDEBAR -->
+            <aside class="min-[1630px]:w-64 xl:block shrink-0 bg-[#2A2A2A] rounded-3xl overflow-y-auto">
+                <div class="relative p-4 flex-col justify-center">
+                    <h3 class="flex items-center gap-2 text-2xl pt-5 2xl 2xl:ml-0  justify-center">
+                        <span class="w-6 h-6 flex items-center justify-center">
+                            <img src="images/Vector.svg" class="w-full h-full" alt="">
+                        </span>
+                        Favorites
+                    </h3>
+
+                    <div class="text-xl [&_span]:ml-3 mt-4 sm:[&_a:not(:last-child)]:mr-11 min-[1630px]:[&_a]:ml-0! sm:ml-6 sm:[&_a]:mr-0 [&_a]:mr-6 [&_a]:py-2 min-[1630px]:flex-col flex flex-wrap "
+                        id="favoriteCities">
+                    </div>
+
+                </div>
+            </aside>
+
+            <!-- CONTENT -->
+            <section class="flex-7 shrink mt-8  min-[1630px]:mt-0">
+
+                <!-- HERO -->
+                <div class="bg-[#2A2A2A] rounded-3xl sm:pl-12 pl-8 p-4">
+
+                    <div class="relative pt-6 flex justify-between sm:pr-4 pr-1">
+                        <h2 class="text-3xl font-semibold sm:text-4xl" id="cityName">Madrid</h2>
+                        <a href="#" class="group inline-block">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"
+                                class="sm:w-12 sm:h-12 h-8 w-8 text-white group-hover:text-[#FDCA00] transition duration-150"
+                                fill="currentColor" id="starIcon">
+
+                                <path
+                                    d="M15.9238 6.41816L11.8791 10.0342L13.0269 15.3365C13.046 15.4245 13.0109 15.5162 12.938 15.5695C12.8983 15.5978 12.8518 15.6138 12.8039 15.6138C12.7647 15.6138 12.725 15.6037 12.6894 15.5832L7.99997 12.8536L3.3105 15.5823C3.23207 15.6275 3.13494 15.6224 3.06199 15.5695C2.98903 15.5171 2.95437 15.4264 2.97352 15.337L4.12035 10.0347L0.0756648 6.41861C0.00863331 6.35751 -0.0169025 6.26312 0.0109133 6.1783C0.0387291 6.09258 0.11488 6.03147 0.204712 6.0219L5.60234 5.47425L7.79112 0.509814C7.86408 0.345199 8.1354 0.345199 8.20836 0.509814L10.3967 5.47425L15.7948 6.0219C15.8841 6.03147 15.9603 6.09121 15.989 6.1783C16.0164 6.26312 15.9909 6.3566 15.9238 6.41816Z" />
+                            </svg>
+                        </a>
+                    </div>
+
+                    <p class="mt-4 sm:mt-2 text-[#f2f2f29f] sm:mb-10 mb-6 chanceRainHero">
+                        Chance of rain <span>0%</span>
+                    </p>
+
+                    <h2 class="text-6xl font-semibold mt-16 mb-8 sm:text-8xl" id="temperature">31°</h2>
+
+                </div>
+
+                <!-- FORECAST -->
+                <!--
+                <div class="bg-[#2A2A2A] rounded-3xl p-4 pl-12 my-8">
+
+                    <h3 class="sm:text-2xl text-xl">Today Forecast</h3>
+
+                    <ul
+                        class="flex gap-6 sm:mt-5 mt-7 list-none pb-4 justify-evenly mb-8 shrink overflow-x-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
+
+                        <li class="text-center min-w-[80px] shrink-0 border-r border-white/20 last:border-0 pr-6">
+                            <span class="inline-block text-[1rem]">6:00AM</span>
+                            <img src="images/Sun.svg" class="w-16 h-16 mx-auto" alt="">
+                        </li>
+
+                        <li class="text-center min-w-[80px] shrink-0 border-r border-white/20 last:border-0 pr-6">
+                            <span class="inline-block text-[1rem]">6:00AM</span>
+                            <img src="images/Sun.svg" class="w-16 h-16 mx-auto" alt="">
+                        </li>
+                        <li class="text-center min-w-[80px] shrink-0 border-r border-white/20 last:border-0 pr-6">
+                            <span class="inline-block text-[1rem]">6:00AM</span>
+                            <img src="images/Sun.svg" class="w-16 h-16 mx-auto" alt="">
+                        </li>
+                        <li class="text-center min-w-[80px] shrink-0 border-r border-white/20 last:border-0 pr-6">
+                            <span class="inline-block text-[1rem]">6:00AM</span>
+                            <img src="images/Sun.svg" class="w-16 h-16 mx-auto" alt="">
+                        </li>
+                        <li class="text-center min-w-[80px] shrink-0 border-r border-white/20 last:border-0 pr-6">
+                            <span class="inline-block text-[1rem]">6:00AM</span>
+                            <img src="images/Sun.svg" class="w-16 h-16 mx-auto" alt="">
+                        </li>
+                        <li class="text-center min-w-[80px]  shrink-0 border-r border-white/20 last:border-0 pr-6">
+                            <span class="inline-block text-[1rem]">6:00AM</span>
+                            <img src="images/Sun.svg" class="w-16 h-16 mx-auto" alt="">
+                        </li>
+                    </ul>
+
+                </div>
+                -->
+                <div class="bg-[#2A2A2A] rounded-3xl p-4 sm:pl-12 my-6 sm:my-8">
+
+                    <h3 class="text-xl sm:text-2xl pl-2">Today Forecast</h3>
+
+                    <ul id="hourlyForecast"
+                        class="flex gap-4 sm:gap-6 mt-5 list-none overflow-x-auto no-scrollbar lg:justify-evenly mb-2 lg:mb-8 pb-2">
+                        <li class="text-center shrink-0 px-4 sm:px-0 sm:pr-8 border-r-2 border-white/40">
+                            <span class="inline-block text-[1.05rem] mb-2">22:00</span>
+                            <i
+                                class="wi wi-day-sunny text-5xl sm:text-6xl 2xl:text-5xl text-amber-400 block! my-3 mx-auto"></i>
+                            <span class="block text-sm text-white/70 mt-6">28°</span>
+                        </li>
+                        <li class="text-center shrink-0 px-4 sm:px-0 sm:pr-8 border-r-2 border-white/40">
+                            <span class="inline-block text-[1.05rem] mb-2">23:00</span>
+                            <i
+                                class="wi wi-day-cloudy text-5xl sm:text-6xl 2xl:text-5xl text-sky-300 block! my-3 mx-auto"></i>
+                            <span class="block text-sm text-white/70 mt-6">26°</span>
+                        </li>
+                        <li class="text-center shrink-0 px-4 sm:px-0 sm:pr-8 border-r-2 border-white/40">
+                            <span class="inline-block text-[1.05rem] mb-2">00:00</span>
+                            <i
+                                class="wi wi-night-alt-cloudy text-5xl sm:text-6xl 2xl:text-5xl text-slate-300 block! my-3 mx-auto"></i>
+                            <span class="block text-sm text-white/70 mt-6">25°</span>
+                        </li>
+                        <li class="text-center shrink-0 px-4 sm:px-0 sm:pr-8 border-r-2 border-white/40">
+                            <span class="inline-block text-[1.05rem] mb-2">01:00</span>
+                            <i
+                                class="wi wi-rain text-5xl sm:text-6xl 2xl:text-5xl text-blue-400 block! my-3 mx-auto"></i>
+                            <span class="block text-sm text-white/70 mt-6">24°</span>
+                        </li>
+                        <li class="text-center shrink-0 px-4 sm:px-0 sm:pr-8 border-r-2 border-white/40">
+                            <span class="inline-block text-[1.05rem] mb-2">02:00</span>
+                            <i
+                                class="wi wi-thunderstorm text-5xl sm:text-6xl 2xl:text-5xl text-amber-500 block! my-3 mx-auto"></i>
+                            <span class="block text-sm text-white/70 mt-6">24°</span>
+                        </li>
+                        <li class="text-center shrink-0 px-4 sm:px-0 sm:pr-8">
+                            <span class="inline-block text-[1.05rem] mb-2">03:00</span>
+                            <i
+                                class="wi wi-fog text-5xl sm:text-6xl 2xl:text-5xl text-zinc-400 block! my-3 mx-auto"></i>
+                            <span class="block text-sm text-white/70 mt-6">23°</span>
+                        </li>
+                    </ul>
+
+                </div>
+                <!--AIR CONDITIONS-->
+                <div class="bg-[#2A2A2A] rounded-3xl p-4 sm:pl-12 pl-6 pb-6">
+                    <h3 class="sm:text-2xl text-xl mb-4">Air conditions</h3>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="">
+                            <p class="text-white/60">Feels like</p>
+                            <p class="sm:text-xl text-base feelsLike">31°</p>
+                        </div>
+
+                        <div class="">
+                            <p class="text-white/60">Wind</p>
+                            <p class="sm:text-xl text-base windSpeed">0.25 km/h</p>
+                        </div>
+
+                        <div class="">
+                            <p class="text-white/60">Chance of rain</p>
+                            <p class="sm:text-xl text-base chanceRain">0%</p>
+                        </div>
+
+                        <div class="">
+                            <p class="text-white/60">UV Index</p>
+                            <p class="sm:text-xl text-base uvIndex">3</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!--7 DAY FORECAST-->
+            <!---->
+            <section class=" bg-[#2A2A2A] rounded-3xl flex-3 overflow-y-auto  sm:p-4 2xl:mt-0 mt-8">
+                <h2 class="pt-6 sm:text-2xl pl-6 text-xl">7 DAY FORECAST</h2>
+                <ul class="flex flex-col sm:p-6 2xl:p-2 sm:pt-5 p-3" id="dailyForecast">
+                    <li class="flex items-center justify-between px-2 py-2">
+                        <span class="text-[#f2f2f29f]">Today</span>
+                        <i
+                            class="wi wi-day-sunny text-5xl sm:text-6xl 2xl:text-5xl text-amber-400 block! my-3 mx-auto"></i>
+                        <span class="text-lg sm:text-2xl">29° <span
+                                class="text-white/50 text-sm sm:text-base">17°</span></span>
+                    </li>
+                    <li class="py-3 px-2 flex items-center justify-between border-t-2 border-[#ffffff75]">
+                        <span class="text-[#f2f2f29f]">Today</span>
+                        <i
+                            class="wi wi-day-sunny text-5xl sm:text-6xl 2xl:text-5xl text-amber-400 block! my-3 mx-auto"></i>
+                        <span class="text-lg sm:text-2xl">29° <span
+                                class="text-white/50 text-sm sm:text-base">17°</span></span>
+                    </li>
+                    <li class="py-3 px-2 flex items-center justify-between border-t-2 border-[#ffffff75]">
+                        <span class="text-[#f2f2f29f]">Today</span>
+                        <i
+                            class="wi wi-day-sunny text-5xl sm:text-6xl 2xl:text-5xl text-amber-400 block! my-3 mx-auto"></i>
+                        <span class="text-lg sm:text-2xl">29° <span
+                                class="text-white/50 text-sm sm:text-base">17°</span></span>
+                    </li>
+                    <li class="py-3 px-2 flex items-center justify-between border-t-2 border-[#ffffff75]">
+                        <span class="text-[#f2f2f29f]">Today</span>
+                        <i
+                            class="wi wi-day-sunny text-5xl sm:text-6xl 2xl:text-5xl text-amber-400 block! my-3 mx-auto"></i>
+                        <span class="text-lg sm:text-2xl">29° <span
+                                class="text-white/50 text-sm sm:text-base">17°</span></span>
+                    </li>
+                    <li class="py-3 px-2 flex items-center justify-between border-t-2 border-[#ffffff75]">
+                        <span class="text-[#f2f2f29f]">Today</span>
+                        <i
+                            class="wi wi-day-sunny text-5xl sm:text-6xl 2xl:text-5xl text-amber-400 block! my-3 mx-auto"></i>
+                        <span class="text-lg sm:text-2xl">29° <span
+                                class="text-white/50 text-sm sm:text-base">17°</span></span>
+                    </li>
+                    <li class="py-3 px-2 flex items-center justify-between border-t-2 border-[#ffffff75]">
+                        <span class="text-[#f2f2f29f]">Today</span>
+                        <i
+                            class="wi wi-thunderstorm text-5xl sm:text-6xl 2xl:text-5xl text-amber-500 block! my-3 mx-auto"></i>
+                        <span class="text-lg sm:text-2xl">29° <span
+                                class="text-white/50 text-sm sm:text-base">17°</span></span>
+                    </li>
+                    <li class="py-3 px-2 flex items-center justify-between border-t-2 border-[#ffffff75]">
+                        <span class="text-[#f2f2f29f]">Today</span>
+                        <i class="wi wi-rain text-5xl sm:text-6xl 2xl:text-5xl text-blue-400 block! my-3 mx-auto"></i>
+                        <span class="text-lg sm:text-2xl">29° <span
+                                class="text-white/50 text-sm sm:text-base">17°</span></span>
+                    </li>
+                </ul>
+            </section>
+        </div>
+    </main>
+    <script src="js/index.js"></script>
+</body>
+
+</html>

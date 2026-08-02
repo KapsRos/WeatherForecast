@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient matching your app's theme -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+
+    <!-- Sun Glow Gradient -->
+    <linearGradient id="sunGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+
+    <!-- Front Cloud Gradient -->
+    <linearGradient id="cloudGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#cbd5e1"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Base Rounded Container -->
+  <rect width="64" height="64" rx="16" fill="url(#bgGrad)"/>
+
+  <!-- Sun Rays & Body (Top Right) -->
+  <circle cx="42" cy="22" r="10" fill="url(#sunGrad)"/>
+  <path d="M42 8v3 M42 33v3 M56 22h-3 M31 22h-3 M52 12l-2 2 M34 30l-2 2 M52 32l-2-2 M34 14l-2-2" 
+        stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Front Weather Cloud -->
+  <path d="M22 46h22a9 9 0 0 0 2.2-17.7 11 11 0 0 0-20.7-3.8A8 8 0 0 0 22 46z" 
+        fill="url(#cloudGrad)"/>
+</svg>
