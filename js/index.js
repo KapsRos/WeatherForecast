@@ -194,19 +194,14 @@ async function getWeather(cityName) {
     localStorage.setItem("cachedWeatherData", JSON.stringify(weatherData));
 }
 const getWeatherIcon = (code, isDay = true) => {
-    // Weather-Icons mapping matching Open-Meteo weather codes with responsive font and color classes
     const icons = {
-        // Clear Sky: Sun vs Moon
         0: isDay
             ? `<i class="wi wi-day-sunny text-5xl sm:text-6xl 2xl:text-5xl text-amber-400 block! my-3 mx-auto"></i>`
             : `<i class="wi wi-night-clear text-5xl sm:text-6xl 2xl:text-5xl text-amber-200 block! my-3 mx-auto"></i>`,
 
-        // Mainly Clear: Day Cloud vs Night Cloud
         1: isDay
             ? `<i class="wi wi-day-cloudy text-5xl sm:text-6xl 2xl:text-5xl text-sky-300 block! my-3 mx-auto"></i>`
             : `<i class="wi wi-night-alt-cloudy text-5xl sm:text-6xl 2xl:text-5xl text-sky-200 block! my-3 mx-auto"></i>`,
-
-        // Neutral conditions (same day or night)
         2: `<i class="wi wi-cloud text-5xl sm:text-6xl 2xl:text-5xl text-slate-300 block! my-3 mx-auto"></i>`,
         3: `<i class="wi wi-cloudy text-5xl sm:text-6xl 2xl:text-5xl text-slate-400 block! my-3 mx-auto"></i>`,
         45: `<i class="wi wi-fog text-5xl sm:text-6xl 2xl:text-5xl text-zinc-400 block! my-3 mx-auto"></i>`,
@@ -215,8 +210,6 @@ const getWeatherIcon = (code, isDay = true) => {
         71: `<i class="wi wi-snow text-5xl sm:text-6xl 2xl:text-5xl text-indigo-200 block! my-3 mx-auto"></i>`,
         95: `<i class="wi wi-thunderstorm text-5xl sm:text-6xl 2xl:text-5xl text-amber-500 block! my-3 mx-auto"></i>`
     };
-
-    // Fallback mapping for grouped weather codes
     if ([48].includes(code)) return icons[45];
     if ([53, 55, 63, 65, 80, 81, 82].includes(code)) return icons[61];
     if ([73, 75, 77, 85, 86].includes(code)) return icons[71];
@@ -227,7 +220,6 @@ const getWeatherIcon = (code, isDay = true) => {
 async function getCoordinates(cityName) {
     const response = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityName)}&count=1&language=en&format=json`)
     const data = await response.json()
-    // console.log(data);
     if (!data.results) {
         throw new Error("City not found");
     }
@@ -238,12 +230,11 @@ async function getCoordinates(cityName) {
         longitude: data.results[0].longitude
     };
 }
-// Load a default city on page load
 async function initApp() {
     const cachedCity = localStorage.getItem("lastCity") || "Madrid";
     const cachedData = localStorage.getItem("cachedWeatherData");
     try {
-        await getWeather(cachedCity); // Or any default city you like
+        await getWeather(cachedCity);
         updateUI()
     } catch (error) {
         console.error("Failed to load initial weather:", error);
@@ -279,21 +270,21 @@ const renderFavorite = () => {
     }
     const LIMIT = 2;
     if (counter >= LIMIT) {
-        // Check if the button already exists to avoid duplicates
+        
         if (!document.getElementById("resetBtn")) {
             const parent = document.createElement("div")
             const resetBtn = document.createElement("button");
             resetBtn.id = "resetBtn";
             resetBtn.textContent = "Reset Favorites";
 
-            // Adding professional Tailwind classes
+        
             resetBtn.className = "mt-4 w-full  text-sm text-red-400 border border-red-400/50 py-2 rounded-xl hover:bg-red-400 hover:text-white transition-all cursor-pointer";
 
             resetBtn.onclick = function () {
-                favoriteCities.innerHTML = ""; // Clear the list
-                counter = 0; // Reset counter
-                arrCities = []; // Clear array
-                this.remove(); // Remove the button itself
+                favoriteCities.innerHTML = "";
+                counter = 0;
+                arrCities = [];
+                this.remove(); 
                 isAvailable = true
             };
 
@@ -316,7 +307,6 @@ const renderAirConditions = () => {
     let currentHours = new Date().getHours();
     chanceRain.textContent =
         `${weatherData.daily.precipitationProbability[0]}%`;
-    console.log(`${weatherData.daily.precipitationProbability[0]}%`);
 }
 const renderHourlyWeather = () => {
     if (!hourlyContainer || !weatherData) return;
@@ -337,14 +327,13 @@ const renderHourlyWeather = () => {
         const dateObj = new Date(weatherData.hourly.time[i]);
         const formattedTime = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-        // Check hour: 6:00 to 19:59 considered Day
+
         const hour = dateObj.getHours();
         const isDay = hour >= 6 && hour < 20;
 
         const temp = Math.round(weatherData.hourly.temperature[i]);
         const weatherCode = weatherData.hourly.weatherCode[i];
 
-        // Pass isDay as the 2nd argument!
         const iconHtml = getWeatherIcon(weatherCode, isDay);
 
         const borderClass = i === (validStartIndex + hoursToDisplay - 1) ? '' : 'border-r-2 border-white/40';
@@ -378,10 +367,7 @@ const renderDailyForecast = () => {
                         <span class="text-lg sm:text-2xl">${maxTemp}°<span
                                 class="text-white/50 text-sm sm:text-base">${minTemp}°</span></span>
                     </li>`
-        console.log(maxTemp);
-        console.log(weatherCode);
-        console.log(weatherData);
-        console.log(iconHtml);
+
     }
     dailyContainer.innerHTML = html
 }
